@@ -1,4 +1,4 @@
-package textRank
+package Gotextrank
 
 import (
 	"fmt"

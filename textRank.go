@@ -1,5 +1,4 @@
-// textRank project textRank.go
-package textRank
+package Gotextrank
 
 import (
 	"fmt"

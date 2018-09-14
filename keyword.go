@@ -1,23 +1,20 @@
-package textRank
+package Gotextrank
 
 import (
-	"bufio"
 	"fmt"
-	r "github.com/ggaaooppeenngg/Gommseg"
-	"os"
+	//"bufio"
+	//	"fmt"
+	//"os"
 	"sort"
+
+	mmseg "github.com/liuhuanqiang/gommseg"
 )
 
-var segmenter *r.Segmenter
 var window int = 4
 var initialWt float64 = 1.0
 
 func init() {
-	segmenter = new(r.Segmenter)
-	errInit := segmenter.Init("../Godarts/darts.lib")
-	if errInit != nil {
-		fmt.Println(errInit)
-	}
+	mmseg.InitWordMap()
 }
 
 func builtGraph(words []string) (map[string]Vertex, *Graph) {
@@ -34,7 +31,7 @@ func builtGraph(words []string) (map[string]Vertex, *Graph) {
 		for j := i + 1; j < i+window; j++ {
 			from := graphMap[words[i]]
 			to := graphMap[words[j]]
-			//fmt.Println(from, to)
+			fmt.Println(from, to)
 			has := wordsGraph.HasEdge(from, to)
 			if has {
 				wordsGraph.AddEdgeWeight(from, to, initialWt)
@@ -46,9 +43,9 @@ func builtGraph(words []string) (map[string]Vertex, *Graph) {
 			}
 		}
 	}
-	//fmt.Println("go")
-	//fmt.Println(wordsGraph)
-	//fmt.Println(graphMap)
+	fmt.Println("go")
+	fmt.Println(wordsGraph)
+	fmt.Println(graphMap)
 	return graphMap, wordsGraph
 }
 func iterate(graphMap map[string]Vertex, wordsGraph *Graph, precision float64) (rts []string) {
@@ -80,14 +77,13 @@ func iterate(graphMap map[string]Vertex, wordsGraph *Graph, precision float64) (
 	return rts
 }
 func GetKeyWords(input string, top int, precision float64) (rts []string) {
-	words := make([]string, 0, 100)
-	takeWord := func(offset, length int) {
-		if len(input[offset:offset+length]) > 3 {
-			words = append(words, input[offset:offset+length])
-			//fmt.Println("go", offset, length, input[offset:offset+length])
-		}
+	fmt.Println("input:", input)
+
+	words := mmseg.Cut(input)
+	for _, word := range words {
+		fmt.Println("word:", word)
 	}
-	segmenter.Mmseg(input, 0, takeWord, false)
+
 	graphMap, wordsGraph := builtGraph(words)
 	//fmt.Println(words)
 	results := iterate(graphMap, wordsGraph, precision)
@@ -95,33 +91,35 @@ func GetKeyWords(input string, top int, precision float64) (rts []string) {
 		top = len(results) - 1
 	}
 	rts = results[0:top]
+
+	for _, v := range rts {
+		fmt.Println("rts:", v)
+	}
+
 	return rts
 }
 
-func GetKeyWordsFile(filePath string, top int, precision float64) (rts []string) {
-	offset := 0
-	unifile, _ := os.Open(filePath)
-	uniLineReader := bufio.NewReaderSize(unifile, 4000)
-	line, bufErr := uniLineReader.ReadString('\n')
-	words := make([]string, 0, 100)
-	takeWord := func(off int, length int) {
-		if len(line[off-offset:off-offset+length]) > 3 {
-			words = append(words, string(line[off:off+length]))
-			//fmt.Println(off, length, line[off-offset:off-offset+length])
-		}
-	}
-	for nil == bufErr {
-		segmenter.Mmseg(line[:], offset, takeWord, false)
-		offset += len(line)
-		line, bufErr = uniLineReader.ReadString('\n')
-	}
-	segmenter.Mmseg(line, offset, takeWord, false)
-	graphMap, wordsGraph := builtGraph(words)
-	//fmt.Println(words)
-	results := iterate(graphMap, wordsGraph, precision)
-	if len(results) < top {
-		top = len(results) - 1
-	}
-	rts = results[0:top]
-	return rts
-}
+//func GetKeyWordsFile(filePath string, top int, precision float64) (rts []string) {
+//	offset := 0
+//	unifile, _ := os.Open(filePath)
+//	uniLineReader := bufio.NewReaderSize(unifile, 4000)
+//	line, bufErr := uniLineReader.ReadString('\n')
+
+//	for nil == bufErr {
+//		segmenter.Mmseg(line[:], offset, takeWord, false)
+//		offset += len(line)
+//		line, bufErr = uniLineReader.ReadString('\n')
+//	}
+//	segmenter.Mmseg(line, offset, takeWord, false)
+
+//	words := mmseg.Cut(line)
+
+//	graphMap, wordsGraph := builtGraph(words)
+//	//fmt.Println(words)
+//	results := iterate(graphMap, wordsGraph, precision)
+//	if len(results) < top {
+//		top = len(results) - 1
+//	}
+//	rts = results[0:top]
+//	return rts
+//}

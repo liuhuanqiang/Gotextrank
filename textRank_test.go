@@ -1,13 +1,16 @@
-package textRank
+package Gotextrank
 
 import (
-	//"fmt"
+	"fmt"
 	"testing"
 )
 
 func TestTextRank(t *testing.T) {
 	//第一个参数是文件目录，第二个参数是关键词的个数，第三个参数是收敛条件
 	//rts := GetKeyWordsByFile("testArticle.txt", 10, 0.001)
+
+	t.Log("000000")
+
 	rts := GetKeyWords(`据中国军网报道 今天上午，
 		我国第一艘航空母舰辽宁舰从青岛某军港解缆起航。在海军导弹驱逐舰沈阳舰、
 		石家庄舰和导弹护卫舰烟台舰、潍坊舰的伴随下赶赴南海，
@@ -28,9 +31,7 @@ func TestTextRank(t *testing.T) {
 		交付予中国人民解放军海军。2013年9月25日，辽宁舰迎来交接入列一周年的日子，
 		短短一年的时间，辽宁舰先后完成了舰载机连续起降、驻舰飞行、
 		短距滑跃起飞等试验，以令世界惊讶的速度稳步推进各项试验和训练。`, 3, 0.001)
-	rts1 := GetKeyWordsFile("testArticle.txt", 3, 0.001)
 	t.Log(rts)
-	t.Log(rts1)
-	//fmt.Println(rts)
-	//fmt.Println(rts1)
+	//	t.Log(rts1)
+	fmt.Println(rts)
 }
